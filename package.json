@@ -2,10 +2,9 @@
   "name": "elm-mouse",
   "version": "1.0.0",
   "description": "Playing with elm mouse events",
-  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "elm-live"
+    "start": "elm-live Main.elm --open"
   },
   "repository": {
     "type": "git",
