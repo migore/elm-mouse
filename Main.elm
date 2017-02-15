@@ -1,34 +1,37 @@
 module Main exposing (..)
 
+import Mouse exposing (Position)
 import Html exposing (Html, div, text, program)
 
 
 type Msg
-    = NoOp
+    = Moved Position
 
 
 type alias Model =
-    String
+    Position
 
 
 init : ( Model, Cmd msg )
 init =
-    ( "Hello", Cmd.none )
+    ( Position 100 100, Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    ( model, Cmd.none )
+    case msg of
+        Moved position ->
+            ( position, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    Mouse.moves Moved
 
 
 view : Model -> Html Msg
 view model =
-    text model
+    text ("X:" ++ (toString model.x) ++ "Y:" ++ (toString model.y))
 
 
 main =
