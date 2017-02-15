@@ -25,6 +25,10 @@ type alias ShadowSquarePosition =
     Position
 
 
+type alias Color =
+    String
+
+
 init : ( Model, Cmd msg )
 init =
     ( NotStarted, Cmd.none )
@@ -61,37 +65,21 @@ view model =
 
         MouseDown redSquare graySquare ->
             div []
-                [ drawRedSquare redSquare
-                , drawGraySquare graySquare
+                [ drawSquare "red" redSquare
+                , drawSquare "gray" graySquare
                 ]
 
         MouseUp redSquare ->
             div []
-                [ drawRedSquare redSquare
+                [ drawSquare "blue" redSquare
                 ]
 
-
-drawGraySquare : Position -> Html msg
-drawGraySquare position =
+drawSquare : Color -> Position -> Html msg
+drawSquare color position =
     div
         [ style
             [ ( "position", "fixed" )
-            , ( "background-color", "gray" )
-            , ( "width", "100px" )
-            , ( "height", "100px" )
-            , ( "top", centerSquareCssPixels position.y )
-            , ( "left", centerSquareCssPixels position.x )
-            ]
-        ]
-        []
-
-
-drawRedSquare : Position -> Html msg
-drawRedSquare position =
-    div
-        [ style
-            [ ( "position", "fixed" )
-            , ( "background-color", "red" )
+            , ( "background-color", color )
             , ( "width", "100px" )
             , ( "height", "100px" )
             , ( "top", centerSquareCssPixels position.y )
