@@ -11,29 +11,41 @@ type Msg
     | Up Position
 
 
-type alias Model =
-    { current : Maybe Position
-    , square : Maybe Position
-    , isDown : Bool
-    }
+type Model
+    = NotStarted
+    | MouseDown RedSquarePosition ShadowSquarePosition
+    | MouseUp RedSquarePosition
+
+
+type alias RedSquarePosition =
+    Position
+
+
+type alias ShadowSquarePosition =
+    Position
 
 
 init : ( Model, Cmd msg )
 init =
-    ( Model Nothing Nothing False, Cmd.none )
+    ( NotStarted, Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Moved position ->
-            ( { model | current = Just position }, Cmd.none )
+            case model of
+                MouseDown redSquare shadowSquare ->
+                    MouseDown redSquare position ! []
+
+                _ ->
+                    model ! []
 
         Down position ->
-            ( { model | isDown = True, square = Just position }, Cmd.none )
+            MouseDown position position ! []
 
         Up position ->
-            ( { model | isDown = False, square = Just position }, Cmd.none )
+            MouseUp position ! []
 
 
 subscriptions : Model -> Sub Msg
@@ -43,61 +55,50 @@ subscriptions model =
 
 view : Model -> Html Msg
 view model =
-    case model.current of
-        Nothing ->
-            text "Mouse hasn't moved yet!"
+    case model of
+        NotStarted ->
+            text "Click and drag to play!"
 
-        Just position ->
+        MouseDown redSquare graySquare ->
             div []
-                [ text ("X:" ++ (toString position.x) ++ "Y:" ++ (toString position.y))
-                , redSquare model
-                , mouseFollowSquare model
+                [ drawRedSquare redSquare
+                , drawGraySquare graySquare
+                ]
+
+        MouseUp redSquare ->
+            div []
+                [ drawRedSquare redSquare
                 ]
 
 
-mouseFollowSquare : Model -> Html msg
-mouseFollowSquare model =
-    case model.isDown of
-        False ->
-            div [] []
-
-        True ->
-            case model.current of
-                Nothing ->
-                    div [] []
-
-                Just position ->
-                    div
-                        [ style
-                            [ ( "position", "fixed" )
-                            , ( "background-color", "gray" )
-                            , ( "width", "100px" )
-                            , ( "height", "100px" )
-                            , ( "top", centerSquareCssPixels position.y )
-                            , ( "left", centerSquareCssPixels position.x )
-                            ]
-                        ]
-                        []
+drawGraySquare : Position -> Html msg
+drawGraySquare position =
+    div
+        [ style
+            [ ( "position", "fixed" )
+            , ( "background-color", "gray" )
+            , ( "width", "100px" )
+            , ( "height", "100px" )
+            , ( "top", centerSquareCssPixels position.y )
+            , ( "left", centerSquareCssPixels position.x )
+            ]
+        ]
+        []
 
 
-redSquare : Model -> Html msg
-redSquare model =
-    case model.square of
-        Nothing ->
-            div [] []
-
-        Just position ->
-            div
-                [ style
-                    [ ( "position", "fixed" )
-                    , ( "background-color", "red" )
-                    , ( "width", "100px" )
-                    , ( "height", "100px" )
-                    , ( "top", centerSquareCssPixels position.y )
-                    , ( "left", centerSquareCssPixels position.x )
-                    ]
-                ]
-                []
+drawRedSquare : Position -> Html msg
+drawRedSquare position =
+    div
+        [ style
+            [ ( "position", "fixed" )
+            , ( "background-color", "red" )
+            , ( "width", "100px" )
+            , ( "height", "100px" )
+            , ( "top", centerSquareCssPixels position.y )
+            , ( "left", centerSquareCssPixels position.x )
+            ]
+        ]
+        []
 
 
 centerSquareCssPixels : Int -> String
