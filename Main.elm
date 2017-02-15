@@ -62,11 +62,25 @@ lastUpCircle model =
                     , ( "background-color", "red" )
                     , ( "width", "100px" )
                     , ( "height", "100px" )
-                    , ( "top", (toString position.y) ++ "px" )
-                    , ( "left", (toString position.x) ++ "px" )
+                    , ( "top", centerSquareCssPixels position.y )
+                    , ( "left", centerSquareCssPixels position.x )
                     ]
                 ]
                 []
+
+
+centerSquareCssPixels : Int -> String
+centerSquareCssPixels value =
+    let
+        center =
+            value - halfSquareSide
+    in
+        (toString center) ++ "px"
+
+
+halfSquareSide : Int
+halfSquareSide =
+    50
 
 
 main =
