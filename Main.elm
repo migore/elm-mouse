@@ -9,19 +9,19 @@ type Msg
 
 
 type alias Model =
-    Position
+    Maybe Position
 
 
 init : ( Model, Cmd msg )
 init =
-    ( Position 100 100, Cmd.none )
+    ( Nothing, Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Moved position ->
-            ( position, Cmd.none )
+            ( Just position, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -31,7 +31,12 @@ subscriptions model =
 
 view : Model -> Html Msg
 view model =
-    text ("X:" ++ (toString model.x) ++ "Y:" ++ (toString model.y))
+    case model of
+        Nothing ->
+            text "Mouse hasn't moved yet!"
+
+        Just position ->
+            text ("X:" ++ (toString position.x) ++ "Y:" ++ (toString position.y))
 
 
 main =
